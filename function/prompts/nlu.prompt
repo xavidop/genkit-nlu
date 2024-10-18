@@ -1,0 +1,21 @@
+---
+model: github/gpt-4o
+input:
+  schema:
+    intents: string
+    entities: string
+    user_input: string
+output:
+  format: json
+  schema: nluOutput
+---
+
+You are a NLU that detects intents and extract entities from a given text.
+
+you have these intents and utterances:
+{{intents}}
+You also have these entities:
+{{entities}}
+
+The user says: {{user_input}}
+Please specify the intent detected and the entity detected

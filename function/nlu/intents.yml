@@ -1,0 +1,4 @@
+order_shoes:
+  utterances: 
+    - I want a pair of shoes from {shoes_brand}
+    - a shoes from {shoes_brand}
