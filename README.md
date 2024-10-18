@@ -1,8 +1,34 @@
- # NLU Flow Project
+# NLU Flow Project
 
 This project implements a Natural Language Understanding (NLU) flow using Firebase Genkit AI and Firebase Functions. The NLU flow detects intents and extracts entities from a given text input.
 
 this project uses GitHub Models using the Genkit GitHub models plugin.
+
+<!-- TOC -->
+
+- [NLU Flow Project](#nlu-flow-project)
+  - [Project Structure](#project-structure)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Development](#development)
+    - [Linting](#linting)
+    - [Building](#building)
+    - [Serving](#serving)
+    - [Deploying](#deploying)
+    - [Development Workflow](#development-workflow)
+  - [Code Explanation](#code-explanation)
+  - [Prompt Definition](#prompt-definition)
+  - [Usage](#usage)
+    - [Intents](#intents)
+    - [Entities](#entities)
+    - [Example](#example)
+  - [License](#license)
+  - [Contributing](#contributing)
+  - [Contact](#contact)
+
+<!-- /TOC -->
+
 
 ## Project Structure
 
@@ -39,12 +65,6 @@ function/
     ```sh
     git clone https://github.com/xavidop/genkit-nlu.git
     cd genkit-nlu
-    ```
-
-2. Install dependencies:
-    ```sh
-    cd function
-    npm install
     ```
 
 ## Configuration
@@ -145,6 +165,7 @@ export const nluFlow = onFlow(
     return result.output();
   },
 );
+```
 
 ## Prompt Definition 
 
