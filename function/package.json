@@ -20,7 +20,7 @@
     "@genkit-ai/dotprompt": "^0.5.16",
     "@genkit-ai/firebase": "^0.5.16",
     "@genkit-ai/flow": "^0.5.16",
-    "genkitx-github": "^1.6.0",
+    "genkitx-github": "^1.8.4",
     "express": "^4.21.1",
     "firebase-admin": "^12.1.0",
     "firebase-functions": "^5.0.0",
