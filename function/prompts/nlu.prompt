@@ -1,6 +1,7 @@
 ---
 model: github/gpt-4o
 input:
+  type: object
   schema:
     intents: string
     entities: string

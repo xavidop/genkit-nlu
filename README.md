@@ -106,22 +106,19 @@ npm run deploy
 ### Development Workflow
 Run in the root directory:
 ```sh
-GENKIT_ENV=dev firebase emulators:start --inspect-functions
-```
-Go to the function directory and run:
-```sh
-genkit start --attach http://localhost:3100 --port 4001
+npm run genkit:start
 ```
 
 ## Code Explanation
-* Configuration: The `configureGenkit` function is called to set up the Genkit environment with plugins for Firebase, GitHub, and Dotprompt. It also sets the log level to "debug" and enables tracing and metrics.
+* Configuration: The `genkit` function is called to set up the Genkit environment with plugins for Firebase, GitHub, and Dotprompt. It also sets the log level to "debug".
 
 ```typescript
-configureGenkit({
-  plugins: [firebase(), github({}), dotprompt()],
-  logLevel: "debug",
-  enableTracingAndMetrics: true,
+const ai = genkit({
+  plugins: [github()],
+  promptDir: 'prompts',
+  model: openAIGpt4o
 });
+logger.setLogLevel('debug');
 ```
 
 * Flow Definition: The nluFlow is defined using the onFlow function.
@@ -134,6 +131,7 @@ configureGenkit({
         * Return Output: Returns the generated output with type `nluOutput`.
 ```typescript
 export const nluFlow = onFlow(
+  ai,
   {
     name: "nluFlow",
     inputSchema: z.object({text: z.string()}),
@@ -141,7 +139,7 @@ export const nluFlow = onFlow(
     authPolicy: noAuth(), // Not requiring authentication.
   },
   async (toDetect) => {
-    const nluOutput = defineSchema(
+    const nluOutput = ai.defineSchema(
       "nluOutput",
       z.object({
         intent: z.string(),
@@ -149,20 +147,22 @@ export const nluFlow = onFlow(
       }),
     );
 
-    const nluPrompt = promptRef("nlu");
+    const nluPrompt = ai.prompt<
+                        z.ZodTypeAny, // Input schema
+                        typeof nluOutput, // Output schema
+                        z.ZodTypeAny // Custom options schema
+                      >("nlu");
 
     const intents = readFileSync('nlu/intents.yml','utf8');
     const entities = readFileSync('nlu/entities.yml','utf8');
 
-    const result = await nluPrompt.generate<typeof nluOutput>({
-      input: {
+    const result = await nluPrompt({
         intents: intents,
         entities: entities,
         user_input: toDetect.text,
-      },
     });
 
-    return result.output();
+    return JSON.stringify(result.output);
   },
 );
 ```
