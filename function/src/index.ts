@@ -1,19 +1,20 @@
-import {configureGenkit, defineSchema} from "@genkit-ai/core";
 import {onFlow, noAuth} from "@genkit-ai/firebase/functions";
 import { readFileSync } from 'fs';
 
-import * as z from "zod";
-import {firebase} from "@genkit-ai/firebase";
-import {github} from "genkitx-github";
-import {dotprompt, promptRef} from "@genkit-ai/dotprompt";
+import {github, openAIGpt4o} from "genkitx-github";
+import { genkit, z } from "genkit";
+import { logger } from 'genkit/logging';
 
-configureGenkit({
-  plugins: [firebase(), github({}), dotprompt()],
-  logLevel: "debug",
-  enableTracingAndMetrics: true,
+
+const ai = genkit({
+  plugins: [github()],
+  promptDir: 'prompts',
+  model: openAIGpt4o
 });
+logger.setLogLevel('debug');
 
 export const nluFlow = onFlow(
+  ai,
   {
     name: "nluFlow",
     inputSchema: z.object({text: z.string()}),
@@ -21,7 +22,7 @@ export const nluFlow = onFlow(
     authPolicy: noAuth(), // Not requiring authentication.
   },
   async (toDetect) => {
-    const nluOutput = defineSchema(
+    const nluOutput = ai.defineSchema(
       "nluOutput",
       z.object({
         intent: z.string(),
@@ -29,19 +30,21 @@ export const nluFlow = onFlow(
       }),
     );
 
-    const nluPrompt = promptRef("nlu");
+    const nluPrompt = ai.prompt<
+                        z.ZodTypeAny, // Input schema
+                        typeof nluOutput, // Output schema
+                        z.ZodTypeAny // Custom options schema
+                      >("nlu");
 
     const intents = readFileSync('nlu/intents.yml','utf8');
     const entities = readFileSync('nlu/entities.yml','utf8');
 
-    const result = await nluPrompt.generate<typeof nluOutput>({
-      input: {
+    const result = await nluPrompt({
         intents: intents,
         entities: entities,
         user_input: toDetect.text,
-      },
     });
 
-    return result.output();
+    return JSON.stringify(result.output);
   },
 );

@@ -1,12 +1,12 @@
 ---
 model: github/gpt-4o
 input:
+  type: object
   schema:
     intents: string
     entities: string
     user_input: string
 output:
-  format: json
   schema: nluOutput
 ---
 
