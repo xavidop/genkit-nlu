@@ -7,6 +7,7 @@ input:
     entities: string
     user_input: string
 output:
+  format: json
   schema: nluOutput
 ---
 
