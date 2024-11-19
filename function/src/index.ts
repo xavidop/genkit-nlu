@@ -13,6 +13,15 @@ const ai = genkit({
 });
 logger.setLogLevel('debug');
 
+
+const nluOutput = ai.defineSchema(
+  "nluOutput",
+  z.object({
+    intent: z.string(),
+    entities: z.map(z.string(), z.string()),
+  }),
+);
+
 export const nluFlow = onFlow(
   ai,
   {
@@ -22,13 +31,7 @@ export const nluFlow = onFlow(
     authPolicy: noAuth(), // Not requiring authentication.
   },
   async (toDetect) => {
-    const nluOutput = ai.defineSchema(
-      "nluOutput",
-      z.object({
-        intent: z.string(),
-        entities: z.map(z.string(), z.string()),
-      }),
-    );
+
 
     const nluPrompt = ai.prompt<
                         z.ZodTypeAny, // Input schema

@@ -130,6 +130,14 @@ logger.setLogLevel('debug');
         * Prompt Generation: Uses the `nluPrompt` to generate output based on the input text and the read intents and entities.
         * Return Output: Returns the generated output with type `nluOutput`.
 ```typescript
+const nluOutput = ai.defineSchema(
+  "nluOutput",
+  z.object({
+    intent: z.string(),
+    entities: z.map(z.string(), z.string()),
+  }),
+);
+
 export const nluFlow = onFlow(
   ai,
   {
@@ -139,13 +147,6 @@ export const nluFlow = onFlow(
     authPolicy: noAuth(), // Not requiring authentication.
   },
   async (toDetect) => {
-    const nluOutput = ai.defineSchema(
-      "nluOutput",
-      z.object({
-        intent: z.string(),
-        entities: z.map(z.string(), z.string()),
-      }),
-    );
 
     const nluPrompt = ai.prompt<
                         z.ZodTypeAny, // Input schema
