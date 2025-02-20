@@ -138,13 +138,11 @@ const nluOutput = ai.defineSchema(
   }),
 );
 
-export const nluFlow = onFlow(
-  ai,
+export const nluFlow = ai.defineFlow(
   {
     name: "nluFlow",
     inputSchema: z.object({text: z.string()}),
     outputSchema: z.string(),
-    authPolicy: noAuth(), // Not requiring authentication.
   },
   async (toDetect) => {
 
@@ -166,6 +164,11 @@ export const nluFlow = onFlow(
     return JSON.stringify(result.output);
   },
 );
+
+export const nluFunction = onCallGenkit({
+  authPolicy: () => true, // Allow all users to call this function. Not recommended for production.
+}, nluFlow);
+
 ```
 
 ## Prompt Definition 
